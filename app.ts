@@ -3,6 +3,7 @@
 
 class HelloWorld extends Phaser.Scene {
     private client = new Paho.MQTT.Client("mqtt-ws.sdi.hevs.ch", 80, "/ws", "phaser-prototype");
+    private frameCounter = 0
 
     constructor() {
         super("Hello World");
@@ -33,7 +34,7 @@ class HelloWorld extends Phaser.Scene {
         });
 
         this.game.events.on('postrender', () => {
-            if (this.client.isConnected()) {
+            if ((this.frameCounter++ % 3) == 0 && this.client.isConnected()) {
                 this.game.renderer.snapshot((image: HTMLImageElement) => {
                     const data = image.src.replace(/^data:image\/png;base64,/, "");
                     this.client.send("sdi42/VirtualGamePad/LCD/PNG", data);
